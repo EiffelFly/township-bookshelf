@@ -1,45 +1,79 @@
-import { useEffect } from 'react';
-import { handle } from '../utilities/utilities';
-import { GetServerSideProps } from 'next'
-import axios from "axios"
-
+import { PageRootLayout } from '../components/PageRootLayou';
+import SectionContainer from '../components/SectionContainer';
+import { GetStaticProps } from 'next';
+import bookList from '../book-list';
+import { getBookByISBN } from '../lib/google-book-api';
+import { handle } from '../lib/utilities';
+import axios from 'axios';
+import { InferGetStaticPropsType } from 'next';
 
 interface Props {}
 
-const bookshlves = [
-  9789573284536
-]
+const Home: React.FC<Props> = ({ books }: InferGetStaticPropsType<typeof getStaticProps>) => {
+	return (
+		<PageRootLayout>
+			<SectionContainer>
 
-const Home: React.FC<Props> = () => {
-
-	return <div>hi</div>;
+      </SectionContainer>
+		</PageRootLayout>
+	);
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  
-  const [error, result] = await handle(getBookByISBN({isbn:9789573284536}));
-
-  if (error){
-    console.error(error)
-  }
-
-  console.log(result.data.items)
-
-  return {
-    props: {}
-  }
+interface Book {
+	title: string;
+	subtitle: string;
+	authors: string;
+	publishedDate: string;
+	publisher: string;
+	description: string;
+	language: string;
+	pageCount: number;
+	image: string;
 }
 
-const getBookByISBN = async ({ isbn }) => {
-  const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+export const getStaticProps: GetStaticProps = async (context) => {
+	let readingBookList: Book[] = [];
+	const readingBooks = bookList.reading;
+
+	for (let i = 0; i < readingBooks.length; i++) {
+		const [error, result] = await handle(getBookByISBN({ isbn: readingBooks[i].isbn }));
+		if (error || result.data.items.length > 1) {
+			continue;
+		}
+
+		const [fullQueryError, fullQueryResult] = await handle(getBookBySelfLink(result.data.items[0].selfLink));
+
+		if (fullQueryError) {
+			continue;
+		}
+
+		readingBookList.push({
+			title: fullQueryResult.data.volumeInfo.title,
+			subtitle: fullQueryResult.data.volumeInfo.subtitle,
+			authors: fullQueryResult.data.volumeInfo.authors,
+			publishedDate: fullQueryResult.data.volumeInfo.publishedDate,
+			publisher: fullQueryResult.data.volumeInfo.publisher,
+			description: fullQueryResult.data.volumeInfo.description,
+			language: fullQueryResult.data.volumeInfo.language,
+			pageCount: fullQueryResult.data.volumeInfo.pageCount,
+			image: fullQueryResult.data.volumeInfo.imageLinks.thumbnail,
+		});
+	}
+
+	return {
+		props: {
+			books: readingBookList,
+		},
+	};
+};
+
+export default Home;
+
+const getBookBySelfLink = async (selfLink: string) => {
 	try {
-		const res = await axios.get(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`);
-    return Promise.resolve(res)
+		const res = await axios.get(selfLink);
+		return Promise.resolve(res);
 	} catch (err) {
 		return Promise.reject(err);
 	}
 };
-
-
-
-export default Home;
