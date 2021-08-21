@@ -14,7 +14,7 @@ interface Props {}
 const Home: React.FC<Props> = ({ books }: InferGetStaticPropsType<typeof getStaticProps>) => {
 	return (
 		<PageRootLayout>
-			<SectionContainer>
+			<SectionContainer className={"gap-y-4"}>
         <ReadingBooks books={books} />
       </SectionContainer>
 		</PageRootLayout>

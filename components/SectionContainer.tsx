@@ -1,10 +1,12 @@
 import * as React from "react";
 
-interface Props { }
+interface Props {
+  className: string;
+}
 
-const SectionContainer: React.FC<Props> = ({ children }) => {
+const SectionContainer: React.FC<Props> = ({ children, className }) => {
   return (
-    <div className="flex flex-col m-auto max-w-4xl lg:max-w-[1200px] px-8 lg:px-4">
+    <div className={"flex flex-col mx-auto lg:max-w-[1200px] px-8 lg:px-4 py-40 " + className}>
       {children}
     </div>
   );
