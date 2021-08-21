@@ -3,9 +3,11 @@ import SectionContainer from '../components/SectionContainer';
 import { GetStaticProps } from 'next';
 import bookList from '../book-list';
 import { getBookByISBN } from '../lib/google-book-api';
-import { handle } from '../lib/utilities';
+import { handle, truncateString } from '../lib/utilities';
 import axios from 'axios';
 import { InferGetStaticPropsType } from 'next';
+import ReadingBooks from '../components/ReaddingBooks';
+import { Book } from "../type/type"
 
 interface Props {}
 
@@ -13,23 +15,13 @@ const Home: React.FC<Props> = ({ books }: InferGetStaticPropsType<typeof getStat
 	return (
 		<PageRootLayout>
 			<SectionContainer>
-
+        <ReadingBooks books={books} />
       </SectionContainer>
 		</PageRootLayout>
 	);
 };
 
-interface Book {
-	title: string;
-	subtitle: string;
-	authors: string;
-	publishedDate: string;
-	publisher: string;
-	description: string;
-	language: string;
-	pageCount: number;
-	image: string;
-}
+
 
 export const getStaticProps: GetStaticProps = async (context) => {
 	let readingBookList: Book[] = [];
@@ -40,25 +32,35 @@ export const getStaticProps: GetStaticProps = async (context) => {
 		if (error || result.data.items.length > 1) {
 			continue;
 		}
-
 		const [fullQueryError, fullQueryResult] = await handle(getBookBySelfLink(result.data.items[0].selfLink));
 
 		if (fullQueryError) {
 			continue;
 		}
 
+    let truncateDescription: string;
+
+    if ( fullQueryResult.data.volumeInfo.language === "en" ){
+      truncateDescription = truncateString(fullQueryResult.data.volumeInfo.description, 200)
+    } else {
+      truncateDescription = truncateString(fullQueryResult.data.volumeInfo.description, 100)
+    }
+
+    
 		readingBookList.push({
 			title: fullQueryResult.data.volumeInfo.title,
-			subtitle: fullQueryResult.data.volumeInfo.subtitle,
+			subtitle: fullQueryResult.data.volumeInfo.subtitle || "",
 			authors: fullQueryResult.data.volumeInfo.authors,
 			publishedDate: fullQueryResult.data.volumeInfo.publishedDate,
 			publisher: fullQueryResult.data.volumeInfo.publisher,
-			description: fullQueryResult.data.volumeInfo.description,
+			description: truncateDescription,
 			language: fullQueryResult.data.volumeInfo.language,
 			pageCount: fullQueryResult.data.volumeInfo.pageCount,
 			image: fullQueryResult.data.volumeInfo.imageLinks.thumbnail,
 		});
 	}
+
+  console.log(readingBookList)
 
 	return {
 		props: {

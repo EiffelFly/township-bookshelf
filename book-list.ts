@@ -2,8 +2,8 @@ const bookList = {
 	reading: [
 		{
 			title: 'Get together',
-			isbn: '978-1732265196',
-			readingChapter: '3',
+			isbn: '9781732265196',
+			currentPage: '52',
 			startDate: '2021-08-12',
 		},
 	],

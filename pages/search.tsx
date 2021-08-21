@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { handle } from '../utilities/utilities';
+import { handle } from '../lib/utilities';
 import { GetServerSideProps } from 'next';
 import axios from 'axios';
 
