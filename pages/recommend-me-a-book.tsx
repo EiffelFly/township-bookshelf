@@ -7,8 +7,10 @@ import SectionContainer from '../components/SectionContainer';
 import { getBookByTitle } from '../lib/google-book-api';
 import { handle } from '../lib/utilities';
 import LoadingSpin from '../components/LoadingSpin';
-import { Book } from '../type/type';
+import { Book, updateProp } from '../type/type';
 import SingleBook from '../components/SingleBook';
+import RecommendReasonForm from '../components/RecommendReasonForm';
+import ThankForRecommendation from '../components/ThankForRecommendation';
 
 interface Props {}
 
@@ -25,7 +27,18 @@ const Page: FC<Props> = () => {
 
 	const handleSelectedBook = (value: Book) => {
 		setSelectedBook(value);
-		setStage(stage+1)
+		setStage(stage + 1);
+	};
+
+	const handleUpdate = (value: updateProp) => {
+		if (value.status) {
+			console.log('send email');
+			setStage(stage + 1);
+			return;
+		}
+
+		setStage(stage - 1);
+		setSelectedBook(null);
 	};
 
 	useEffect(() => {
@@ -111,6 +124,16 @@ const Page: FC<Props> = () => {
 					<PageRootLayout>
 						<SectionContainer className={'gap-y-8'}>
 							<SingleBook book={selectedBook} />
+							<RecommendReasonForm onUpdate={handleUpdate} />
+						</SectionContainer>
+					</PageRootLayout>
+				);
+			}
+			case 2: {
+				return (
+					<PageRootLayout>
+						<SectionContainer className={'gap-y-8 my-auto'}>
+							<ThankForRecommendation />
 						</SectionContainer>
 					</PageRootLayout>
 				);

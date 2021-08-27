@@ -12,7 +12,7 @@ const SingleBook: FC<Props> = ({ book }) => {
 			<div className="flex mx-auto mb-4">
 				<Image src={book.image} alt={book.title} width={128} height={192} />
 			</div>
-			<div className="max-w-[300px] text-center mx-auto font-sans font-semibold text-sdm-cg-100">
+			<div className="max-w-[300px] text-center mx-auto font-sans font-semibold text-sdm-cg-50">
 				{book.title}
 			</div>
 			{book.authors && (

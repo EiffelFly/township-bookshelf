@@ -9,3 +9,8 @@ export interface Book {
 	pageCount: number;
 	image: string;
 }
+
+export interface updateProp {
+  status: boolean;
+  message?: string;
+}
