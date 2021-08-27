@@ -6,15 +6,16 @@ interface Props {
 	books: Book[];
 }
 
-const SearchingBooksList: FC<Props> = ({ books }) => {
+const BooksList: FC<Props> = ({ books }) => {
 	return (
-		<div className="font-sans grid grid-cols-6 gap-8">
-			{books.map((book) => (
-				<div key={book.title}>
+		<div className="font-sans grid grid-cols-4 gap-8">
+			{books.map((book, index) => (
+				<div key={index}>
 					<div className="flex flex-col">
-						<div className="relative">
+						{ book.image ? (<div className="relative">
 							<Image src={book.image} alt={book.title} width={128} height={192} />
-						</div>
+						</div>) : (<div className="w-[128px] h-[192px]"></div>)}
+						
             <div>
               {book.title}
             </div>
@@ -28,4 +29,4 @@ const SearchingBooksList: FC<Props> = ({ books }) => {
 	);
 };
 
-export default SearchingBooksList;
+export default BooksList;
