@@ -7,6 +7,7 @@ import SectionContainer from '../components/SectionContainer';
 import { getBookByTitle } from '../lib/google-book-api';
 import { handle } from '../lib/utilities';
 import LoadingSpin from '../components/LoadingSpin';
+import { getLargeBookCoverByIsbn, getLargeBookCoverUrlByIsbn } from '../lib/open-book-library-api';
 
 interface Props {}
 
@@ -22,7 +23,6 @@ const Page: FC<Props> = () => {
 	useEffect(() => {
 		const handleEnterKeydown = async (event: KeyboardEvent) => {
 			if (!searchTerm) return;
-			if (searchTerm.length < 4) return;
 
 			if (event.code === 'Enter' || event.code === 'NumpadEnter') {
 				event.preventDefault();
@@ -37,9 +37,23 @@ const Page: FC<Props> = () => {
 
 				for (const item of result.data.items) {
 					let image = null;
-					if ( item.volumeInfo.imageLinks ){
-						image = item.volumeInfo.imageLinks.thumbnail
+					if (item.volumeInfo.imageLinks) {
+						image = item.volumeInfo.imageLinks.thumbnail;
 					}
+
+					// if (item.volumeInfo.industryIdentifiers) {
+					// 	const isbnIndex = item.volumeInfo.industryIdentifiers.findIndex((e) => e.type === 'ISBN_13');
+					// 	if (isbnIndex !== -1) {
+					// 		const isbn = item.volumeInfo.industryIdentifiers[isbnIndex].identifier;
+					// 		console.log(isbn);
+					// 		const [, getOpenLibCoverResult] = await handle(getLargeBookCoverByIsbn(isbn));
+					// 		if (getOpenLibCoverResult.status === 200) {
+					// 			console.log(getOpenLibCoverResult)
+					// 			image = getLargeBookCoverUrlByIsbn(isbn);
+					// 		}
+					// 	}
+					// }
+
 					books.push({
 						title: item.volumeInfo.title,
 						subtitle: item.volumeInfo.subtitle || '',
@@ -67,7 +81,7 @@ const Page: FC<Props> = () => {
 	return (
 		<div className="flex flex-col">
 			<PageRootLayout>
-				<SectionContainer className={'gap-y-4'}>
+				<SectionContainer className={'gap-y-8'}>
 					<RecommendMeABookTitle />
 					<SearchBookForm onChange={handlerSearchTermChange} />
 					{isSearching ? <LoadingSpin className={'w-6 h-6'} /> : <BooksList books={searchedBooks} />}
