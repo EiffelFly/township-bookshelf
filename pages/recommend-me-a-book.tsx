@@ -84,7 +84,7 @@ const Page: FC<Props> = () => {
 				<SectionContainer className={'gap-y-8'}>
 					<RecommendMeABookTitle />
 					<SearchBookForm onChange={handlerSearchTermChange} />
-					{isSearching ? <LoadingSpin className={'w-6 h-6'} /> : <BooksList books={searchedBooks} />}
+					{isSearching ? <LoadingSpin className={'w-6 h-6 text-sdm-cg-100'} /> : <BooksList books={searchedBooks} />}
 				</SectionContainer>
 			</PageRootLayout>
 		</div>
