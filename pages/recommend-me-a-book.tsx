@@ -7,7 +7,8 @@ import SectionContainer from '../components/SectionContainer';
 import { getBookByTitle } from '../lib/google-book-api';
 import { handle } from '../lib/utilities';
 import LoadingSpin from '../components/LoadingSpin';
-import { getLargeBookCoverByIsbn, getLargeBookCoverUrlByIsbn } from '../lib/open-book-library-api';
+import { Book } from '../type/type';
+import SingleBook from '../components/SingleBook';
 
 interface Props {}
 
@@ -15,9 +16,16 @@ const Page: FC<Props> = () => {
 	const [searchTerm, setSearchTerm] = useState<string>();
 	const [isSearching, setIsSearching] = useState<boolean>();
 	const [searchedBooks, setSearchedBooks] = useState([]);
+	const [selectedBook, setSelectedBook] = useState<Book>();
+	const [stage, setStage] = useState<number>(0);
 
 	const handlerSearchTermChange = (value: string) => {
 		setSearchTerm(value);
+	};
+
+	const handleSelectedBook = (value: Book) => {
+		setSelectedBook(value);
+		setStage(stage+1)
 	};
 
 	useEffect(() => {
@@ -78,17 +86,39 @@ const Page: FC<Props> = () => {
 		};
 	}, [searchTerm]);
 
-	return (
-		<div className="flex flex-col">
-			<PageRootLayout>
-				<SectionContainer className={'gap-y-8'}>
-					<RecommendMeABookTitle />
-					<SearchBookForm onChange={handlerSearchTermChange} />
-					{isSearching ? <LoadingSpin className={'w-6 h-6 text-sdm-cg-100'} /> : <BooksList books={searchedBooks} />}
-				</SectionContainer>
-			</PageRootLayout>
-		</div>
-	);
+	const componentSwitch = () => {
+		switch (stage) {
+			case 0: {
+				return (
+					<PageRootLayout>
+						<SectionContainer className={'gap-y-8'}>
+							<RecommendMeABookTitle />
+							<SearchBookForm onChange={handlerSearchTermChange} />
+							{isSearching ? (
+								<LoadingSpin className={'w-6 h-6 text-sdm-cg-100'} />
+							) : (
+								<BooksList
+									books={searchedBooks}
+									onSelectBook={handleSelectedBook}
+								/>
+							)}
+						</SectionContainer>
+					</PageRootLayout>
+				);
+			}
+			case 1: {
+				return (
+					<PageRootLayout>
+						<SectionContainer className={'gap-y-8'}>
+							<SingleBook book={selectedBook} />
+						</SectionContainer>
+					</PageRootLayout>
+				);
+			}
+		}
+	};
+
+	return <div className="flex flex-row">{componentSwitch()}</div>;
 };
 
 export default Page;
