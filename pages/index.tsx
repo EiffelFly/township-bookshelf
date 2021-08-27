@@ -6,7 +6,7 @@ import { getBookByISBN } from '../lib/google-book-api';
 import { handle, truncateString } from '../lib/utilities';
 import axios from 'axios';
 import { InferGetStaticPropsType } from 'next';
-import ReadingBooks from '../components/ReaddingBooks';
+import ReadingBooks from '../components/ReadingBooks';
 import { Book } from "../type/type"
 
 interface Props {}
@@ -28,7 +28,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 	const readingBooks = bookList.reading;
 
 	for (let i = 0; i < readingBooks.length; i++) {
-		const [error, result] = await handle(getBookByISBN({ isbn: readingBooks[i].isbn }));
+		const [error, result] = await handle(getBookByISBN(readingBooks[i].isbn));
 		if (error || result.data.items.length > 1) {
 			continue;
 		}
