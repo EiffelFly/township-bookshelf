@@ -12,5 +12,6 @@ export interface Book {
 
 export interface updateProp {
   status: boolean;
-  message?: string;
+  reason?: string;
+	name?: string;
 }

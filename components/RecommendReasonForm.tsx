@@ -1,13 +1,12 @@
 import { FC, SyntheticEvent, useState, ChangeEvent } from 'react';
 import { updateProp } from '../type/type';
 
-
-
 interface Props {
 	onUpdate: (value: updateProp) => void;
 }
 
 const RecommendReasonForm: FC<Props> = ({ onUpdate }) => {
+	const [name, setName] = useState<string>();
 	const [reason, setReason] = useState<string>();
 	const [error, setError] = useState<string>();
 
@@ -15,35 +14,55 @@ const RecommendReasonForm: FC<Props> = ({ onUpdate }) => {
 		e.preventDefault();
 	};
 
-	const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+	const handleReasonChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
 		setReason(e.target.value);
 	};
 
+	const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+		setName(e.target.value);
+	};
+
 	const handleSummit = () => {
+		if (!name) {
+			setError('I would like to know your name.');
+			return;
+		}
 		if (!reason) {
 			setError('I would like to hear your story!');
+			return;
 		}
+
 		onUpdate({
-      status: true,
-      message: reason
-    });
+			status: true,
+			name: name,
+			reason: reason,
+		});
 	};
 
 	const handleCancel = () => {
-    onUpdate({
-      status: false,
-    })
-  };
+		onUpdate({
+			status: false,
+		});
+	};
 
 	return (
 		<form className="flex flex-col" onSubmit={onSubmit}>
 			<div className="font-sans text-xl font-semibold text-sdm-cg-200 mb-4">
+				Hi, What's your name
+			</div>
+			<input
+				type="text"
+				value={name || ""}
+				onChange={handleNameChange}
+				className="bg-sdm-cg-800 resize-none px-4 py-2 focus:outline-none rounded-md text-sdm-cg-100 mb-6"
+			/>
+			<div className="font-sans text-xl font-semibold text-sdm-cg-200 mb-4">
 				Why do you want to recommend this book?
 			</div>
 			<textarea
-				value={reason}
-				onChange={handleChange}
-				className="bg-sdm-cg-800 resize-none p-2 focus:outline-none rounded-md h-40 text-sdm-cg-100 mb-2"
+				value={reason || ""}
+				onChange={handleReasonChange}
+				className="bg-sdm-cg-800 resize-none p-4 focus:outline-none rounded-md h-40 text-sdm-cg-100 mb-2"
 			/>
 			<div className="font-sans text-md font-semibold text-sdm-scarlet-500 mb-12">
 				{error}

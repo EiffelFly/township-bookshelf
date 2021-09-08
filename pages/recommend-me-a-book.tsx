@@ -30,11 +30,15 @@ const Page: FC<Props> = () => {
 		setStage(stage + 1);
 	};
 
-	const handleUpdate = (value: updateProp) => {
+	const handleUpdate = async (value: updateProp) => {
 		if (value.status) {
 			console.log('send email');
+			const [error, ] = await handle(postEmailApi(value.name, value.reason, selectedBook.title))
+			if ( error ){
+				console.error(error)
+				return 
+			}
 			setStage(stage + 1);
-			return;
 		}
 
 		setStage(stage - 1);
@@ -122,7 +126,7 @@ const Page: FC<Props> = () => {
 			case 1: {
 				return (
 					<PageRootLayout>
-						<SectionContainer className={'gap-y-8'}>
+						<SectionContainer className={'gap-y-16'}>
 							<SingleBook book={selectedBook} />
 							<RecommendReasonForm onUpdate={handleUpdate} />
 						</SectionContainer>
@@ -143,5 +147,26 @@ const Page: FC<Props> = () => {
 
 	return <div className="flex flex-row">{componentSwitch()}</div>;
 };
+
+
+const postEmailApi = async (name: string, reason: string, title: string) => {
+	try {
+		const res = await fetch("/api/email", {
+			body: JSON.stringify({
+				name: name,
+				reason: reason,
+				title: title
+			}),
+			headers: {
+				"Content-Type": "application/json",
+			},
+			method: "POST",
+		});
+		return Promise.resolve(res)
+	} catch(err){
+		console.log("top-1", err)
+		return Promise.reject(err)
+	}
+}
 
 export default Page;
