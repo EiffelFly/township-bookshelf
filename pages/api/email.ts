@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { sendEmail } from '../../lib/email';
+import { sendEmail, generateEmailHtml } from '../../lib/email';
 
 interface ReturnType {
   error?: {} | null
@@ -8,13 +8,13 @@ interface ReturnType {
 
 const main = async (req: NextApiRequest, res: NextApiResponse<ReturnType>) => {
 	try {
-    const testMailOption = {
+    const mailOptions = {
       from: `recommend-book@summerbud.org`,
       to: 'eric525282@gmail.com',
       subject: `Recommended by ${req.body.name}: ${req.body.title}`,
-      html: `${req.body.reason}`,
+      html: generateEmailHtml(req.body.name, req.body.title, req.body.author, req.body.image, req.body.reason)
     };
-    await sendEmail(testMailOption)
+    await sendEmail(mailOptions)
     return res.status(201).json({ result: "Success" });
   } catch (err) {
     console.log("mid", err)
