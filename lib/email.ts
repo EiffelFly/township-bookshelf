@@ -53,8 +53,8 @@ const getSESConfig = (
 	region?: string,
 	sesConfiguration?: aws.SESClientConfig
 ) => {
-	const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
-	const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+	const accessKeyId = process.env.MY_AWS_ACCESS_KEY_ID;
+	const secretAccessKey = process.env.MY_AWS_SECRET_ACCESS_KEY;
 	const configuration = {
 		apiVersion: '2010-12-01',
 		accessKeyId,
