@@ -48,7 +48,7 @@ const RecommendReasonForm: FC<Props> = ({ onUpdate }) => {
 	return (
 		<form className="flex flex-col" onSubmit={onSubmit}>
 			<div className="font-sans text-xl font-semibold text-sdm-cg-200 mb-4">
-				Hi, What's your name
+				{"Hi, What's your name"}
 			</div>
 			<input
 				type="text"
