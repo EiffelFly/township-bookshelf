@@ -15,6 +15,6 @@ This is a project to let me explore book related feartures, such as search book 
 # Reference
 
 - Blog article about the project: 
-- Live demo site:
+- Live demo site: https://book.summerbud.org
 
 
